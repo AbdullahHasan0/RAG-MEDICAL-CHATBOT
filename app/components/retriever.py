@@ -1,5 +1,6 @@
-from langchain.chains import RetrievalQA
+from langchain.chains import RetrievalQA, ConversationalRetrievalChain
 from langchain_core.prompts import PromptTemplate
+from langchain.memory import ConversationBufferMemory
 
 from app.components.llm import load_llm
 from app.components.vector_store import load_vector_store
@@ -37,12 +38,16 @@ def create_qa_chain():
         if llm is None:
             raise CustomException("LLM model could not be loaded.", None)
         
-        qa_chain = RetrievalQA.from_chain_type(
+        memory = ConversationBufferMemory(memory_key="chat_history", return_messages=True)
+        
+        qa_chain = ConversationalRetrievalChain.from_llm(
             llm=llm,
-            chain_type="stuff",
+            memory=memory,
+            # chain_type="stuff",
             retriever=db.as_retriever(search_type="similarity", search_kwargs={"k":3}),
-            return_source_documents=False,
-            chain_type_kwargs={"prompt": set_custom_prompt()} 
+            # return_source_documents=False,
+            combine_docs_chain_kwargs={"prompt": set_custom_prompt()},
+            # chain_type_kwargs={"prompt": set_custom_prompt()} 
         )
         logger.info("QA Chain created successfully")
 

@@ -36,12 +36,25 @@ def index():
 
             try:
                 qa_chain = create_qa_chain()
+
+                chat_history = []
+                for i in range(0, len(messages)-1,2):
+                    if messages[i]["role"] == "user" and messages[i+1]["role"]=="assistant":
+                        chat_history.append((messages[i]["content"], messages[i+1]["content"]))
                 
-                response = qa_chain.invoke({"query": user_input})
-                result = response.get("result","No response")
+                response = qa_chain.invoke({
+                    "question": user_input,
+                    "chat_history": chat_history
+                })
+
+                result = response.get("answer", response.get("result","No response"))
+
+
 
                 messages.append({"role": "assistant", "content": result})
                 session["messages"] = messages
+
+                print("HERE",chat_history)
             
             except Exception as e:
                 error_msg = f"An error occurred: {str(e)}"
