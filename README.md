@@ -27,6 +27,15 @@ An end-to-end **Retrieval-Augmented Generation (RAG) chatbot** project, fully co
 
 ---
 
+## 🔑 Environment Variables
+
+This project requires the **OpenAI API key** for LLM access.
+
+1. Create a `.env` file in the root directory:
+```env
+OPENAI_API_KEY=your_openai_api_key_here
+```
+
 ## ⚙️ Setup Instructions
 
 ### 1️⃣ Clone the Repository
